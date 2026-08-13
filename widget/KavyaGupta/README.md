@@ -43,3 +43,12 @@ vercel deploy --prod
 ```
 
 The deployed app serves `index.html` and uses Vercel functions in `api/` for Hospilot login, session creation, and polling.
+
+If Vercel asks for build settings, use:
+
+```text
+Framework Preset: Other
+Build Command: leave empty
+Output Directory: leave empty
+Install Command: npm install
+```
