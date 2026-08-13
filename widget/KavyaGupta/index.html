@@ -546,7 +546,9 @@
       if (!activeSession) return;
 
       try {
-        const data = await requestJson(`/api/sessions/${activeSession.sessionId}`);
+        const data = await requestJson(`/api/sessions/${activeSession.sessionId}`, {
+          headers: { "Authorization": `Bearer ${activeSession.token}` }
+        });
         if (data.pipelineReady) {
           stopPolling();
           setStep("plan", "done");

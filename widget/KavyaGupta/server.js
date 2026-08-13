@@ -103,6 +103,13 @@ function withCandidatePrefix(goal) {
   return `${CANDIDATE_PREFIX} ${trimmedGoal}`;
 }
 
+function hasPipeline(pipeline) {
+  if (!pipeline) return false;
+  if (Array.isArray(pipeline)) return pipeline.length > 0;
+  if (typeof pipeline === "object") return Object.keys(pipeline).length > 0;
+  return Boolean(pipeline);
+}
+
 async function createSession(req, res) {
   try {
     const body = await readJson(req);
@@ -153,18 +160,21 @@ async function createSession(req, res) {
 async function getSession(req, res, sessionId) {
   try {
     const saved = activeSessions.get(sessionId);
-    if (!saved) {
-      return sendJson(res, 404, { error: "Unknown session. Create a new plan first." });
+    const authHeader = req.headers.authorization || "";
+    const token = saved?.token || authHeader.replace(/^Bearer\s+/i, "");
+
+    if (!token) {
+      return sendJson(res, 401, { error: "Missing session token. Create a new plan first." });
     }
 
     const session = await hospilotFetch(`/api/sessions/${encodeURIComponent(sessionId)}`, {
-      headers: { "Authorization": `Bearer ${saved.token}` }
+      headers: { "Authorization": `Bearer ${token}` }
     });
 
     sendJson(res, 200, {
       sessionId,
       status: session.status,
-      pipelineReady: Boolean(session.pipeline && Object.keys(session.pipeline).length > 0),
+      pipelineReady: hasPipeline(session.pipeline),
       pipeline: session.pipeline || null
     });
   } catch (error) {
