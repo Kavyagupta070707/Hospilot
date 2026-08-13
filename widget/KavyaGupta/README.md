@@ -42,7 +42,7 @@ vercel deploy
 vercel deploy --prod
 ```
 
-The deployed app serves `index.html` and uses Vercel functions in `api/` for Hospilot login, session creation, and polling.
+The deployed app serves `index.html` as a static page and uses Vercel functions in `api/` for Hospilot login, session creation, and polling. `server.js` is local-only and is intentionally excluded from Vercel.
 
 If Vercel asks for build settings, use:
 

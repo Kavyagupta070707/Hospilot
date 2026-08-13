@@ -3,3 +3,4 @@
 !.env.example
 *.log
 node_modules
+server.js
